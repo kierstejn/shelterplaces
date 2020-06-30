@@ -14,15 +14,7 @@ import IndexPage from "./pages/IndexPage";
 import config from "./config";
 import Layout from "./components/layout/Layout";
 
-
-
 const store = configureStore();
-
-
-
-const customAuthHandler = () => {
-    history.push('/login');
-};
 
 function App() {
   return (

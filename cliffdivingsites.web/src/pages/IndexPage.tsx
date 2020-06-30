@@ -71,7 +71,6 @@ const IndexPage: FunctionComponent = () => {
                     <LocationCard lat={selectedLocation.lat} lng={selectedLocation.lng}/>
                 }
             </GoogleMapReact>
-
         </div>
     )
 };

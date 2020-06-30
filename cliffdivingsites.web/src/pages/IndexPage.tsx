@@ -55,6 +55,7 @@ const IndexPage: FunctionComponent = () => {
 
     return (
         <div style={{display: 'flex', flexDirection: 'column', height: '100%' }} >
+            {process.env.NODE_ENV}
             <GoogleMapReact
                 bootstrapURLKeys={{
                     key: 'AIzaSyCnJaUXeaK95zS4ivA7xTmlKaiuWA9Mf_k',

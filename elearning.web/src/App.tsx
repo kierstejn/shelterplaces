@@ -1,25 +1,44 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import Routes from "./routes";
+import { Provider } from "react-redux";
+import configureStore, { history } from './configureStore'
+import {ConnectedRouter} from "connected-react-router";
+
+// @ts-ignore
+import { Security, LoginCallback } from "@okta/okta-react";
+import { ThemeProvider } from '@material-ui/core';
+import theme from "./util/theme/theme";
+import {Route, BrowserRouter as Router} from "react-router-dom";
+import IndexPage from "./pages/IndexPage";
+
+import config from "./config";
+import Layout from "./components/layout/Layout";
+
+
+
+const store = configureStore();
+
+
+
+const customAuthHandler = () => {
+    history.push('/login');
+};
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <Provider store={store}>
+
+              <ThemeProvider theme={theme}>
+                  <Router>
+                      <Security {...config.oidc}>
+                          <Layout>
+                              <Route path='/implicit/callback' component={LoginCallback}/>
+                              <Route path='/' exact={true} component={IndexPage}/>
+                          </Layout>
+                      </Security>
+                  </Router>
+              </ThemeProvider>
+      </Provider>
   );
 }
 

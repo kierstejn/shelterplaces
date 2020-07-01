@@ -4,7 +4,7 @@ const dev = {
         issuer: 'https://dev-880092.okta.com/oauth2/default',
         redirectUri: 'http://localhost:3000/implicit/callback',
         scopes: ['openid', 'profile', 'email'],
-        pkce: true
+        pkce: false
     }
 };
 
@@ -14,7 +14,7 @@ const prod = {
         issuer: 'https://dev-880092.okta.com/oauth2/default',
         redirectUri: 'https://keen-wiles-2fb95e.netlify.app/implicit/callback',
         scopes: ['openid', 'profile', 'email'],
-        pkce: true
+        pkce: false
     }
 };
 

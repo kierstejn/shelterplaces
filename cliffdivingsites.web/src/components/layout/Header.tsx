@@ -89,7 +89,7 @@ const Header: FunctionComponent = () => {
 
                         </Button>
 
-                        <a href="https://dev-880092.okta.com/oauth2/v1/authorize?idp=0oai7cq86Z5IKkEJG4x6&client_id=0oahhxwioSbJAzJSm4x6&response_type=code&response_mode=fragment&scope=openid%20email&redirect_uri=https%3A%2F%2Fkeen-wiles-2fb95e.netlify.app/implicit/callback%2F&state=WM6D&nonce=YsG76jo">Sign in with Identity Provider</a>
+                        <a href="https://dev-880092.okta.com/oauth2/v1/authorize?idp=0oai7cq86Z5IKkEJG4x6&client_id=0oahhxwioSbJAzJSm4x6&response_type=id_token&response_mode=fragment&scope=openid%20email&redirect_uri=https%3A%2F%2Fkeen%2Dwiles%2D2fb95e%2Enetlify%2Eapp%2Fimplicit%2Fcallback%2F&state=WM6D&nonce=YsG76jo">Sign in with Identity Provider</a>
 
                         {authState.isAuthenticated &&
                             <Fragment>

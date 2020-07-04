@@ -12,7 +12,10 @@ import FormGroup from '@material-ui/core/FormGroup';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import {useOktaAuth} from "@okta/okta-react";
-import {Button, CircularProgress} from "@material-ui/core";
+import {Button, CircularProgress, Link} from "@material-ui/core";
+import { useAuth0 } from "@auth0/auth0-react";
+import {useHistory} from "react-router-dom";
+
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -48,26 +51,23 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Header: FunctionComponent = () => {
 
-    const { authState, authService } = useOktaAuth();
+    const { loginWithRedirect, logout, isAuthenticated, isLoading } = useAuth0();
+    const history = useHistory();
 
     const classes = useStyles();
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
-    const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
+    const handleProfileClicked = () => {
+        history.push('/profile')
     };
 
     const handleAuth = async () => {
-        if(authState.isAuthenticated){
-            authService.logout('/');
+        if(!isAuthenticated){
+            await loginWithRedirect();
         } else {
-            authService.login('/');
+            logout()
         }
     };
 
@@ -75,52 +75,34 @@ const Header: FunctionComponent = () => {
         <div className={classes.root}>
             <AppBar position="static" className={classes.appBar}>
                 <Toolbar className={classes.toolBar}>
-                    <Typography variant="h4" className={classes.title}>
-                        CliffDivingSites
-                    </Typography>
+                    <Link onClick={() => history.push('/')} variant="h4" className={classes.title}>
+
+                            CliffDivingSites
+
+                    </Link>
                     <div>
                         <Button
                             onClick={handleAuth}
                             className={classes.authButton}
+                            disabled={isLoading}
                         >
-                            {authState.isPending && <CircularProgress size={20} className={classes.circularProgress}/>}
-                            {!authState.isPending && authState.isAuthenticated && 'LOGOUT'}
-                            {!authState.isPending && !authState.isAuthenticated && 'LOGIN/REGISTER'}
-
+                            {isLoading && <CircularProgress size={20} className={classes.circularProgress}/>}
+                            {!isLoading && isAuthenticated && 'LOGOUT'}
+                            {!isLoading && !isAuthenticated && 'LOGIN/REGISTER'}
                         </Button>
 
-                        <a href="https://dev-880092.okta.com/oauth2/v1/authorize?idp=0oai7cq86Z5IKkEJG4x6&client_id=0oahhxwioSbJAzJSm4x6&response_type=code&response_mode=fragment&scope=openid%20email&redirect_uri=https%3A%2F%2Fkeen%2Dwiles%2D2fb95e%2Enetlify%2Eapp%2Fimplicit%2Fcallback%2F&state=WM6D&nonce=YsG76jo">Sign in with Identity Provider</a>
-
-                        {authState.isAuthenticated &&
+                        {isAuthenticated &&
                             <Fragment>
                                 <IconButton
                                     aria-label="account of current user"
                                     aria-controls="menu-appbar"
                                     aria-haspopup="true"
-                                    onClick={handleMenu}
+                                    onClick={handleProfileClicked}
                                     color="inherit"
                                     className={classes.accountCircle}
                                 >
                                     <AccountCircle />
                                 </IconButton>
-                                <Menu
-                                    id="menu-appbar"
-                                    anchorEl={anchorEl}
-                                    anchorOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'right',
-                                    }}
-                                    keepMounted
-                                    transformOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'right',
-                                    }}
-                                    open={open}
-                                    onClose={handleClose}
-                                >
-                                    <MenuItem onClick={handleClose}>Profile</MenuItem>
-                                    <MenuItem onClick={handleClose}>My account</MenuItem>
-                                </Menu>
                             </Fragment>
                         }
                     </div>

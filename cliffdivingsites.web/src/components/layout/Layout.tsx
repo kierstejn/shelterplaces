@@ -7,10 +7,9 @@ import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
+            minHeight: 'calc(100vh - 150px)',
             height: 'calc(100vh - 150px)',
-            minHeight: '400px',
-            display: 'flex',
-            flexDirection: 'column'
+            overflow: 'visible'
         }
     }),
 );
@@ -22,8 +21,8 @@ const Layout: FunctionComponent = ({children}) => {
             <Header/>
             <div className={classes.root}>
                 {children}
+                <Footer/>
             </div>
-            <Footer/>
         </Fragment>
     )
 };

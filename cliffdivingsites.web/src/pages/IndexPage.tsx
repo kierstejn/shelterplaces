@@ -110,7 +110,7 @@ const IndexPage: FunctionComponent = () => {
 
 
     return (
-        <div style={{display: 'flex', flexDirection: 'column', height: '100%', flexGrow: 1}} >
+        <div style={{display: 'flex', flexDirection: 'column', flexGrow: 1}} >
             <CssBaseline/>
             <GoogleMapReact
                 bootstrapURLKeys={{

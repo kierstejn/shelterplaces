@@ -7,18 +7,19 @@ import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
-            minHeight: 'calc(100vh - 100px)',
-            height: '50px',
-            overflow: 'visible',
-            display: 'flex',
-            justifyContent: 'space-between',
-            flexDirection: 'column',
-            flexGrow: 1,
+            minHeight: '100vh',
+            height: '100vh',
+            //display: 'flex',
+            overflow: 'scroll',
+            //justifyContent: 'space-between',
+            //flexDirection: 'column',
+            //flex: '1 0 auto',
             width: '100%',
         },
         map: {
+            minHeight: 'calc(100vh - 150px)',
             display: 'flex',
-            flexGrow: 1,
+            flex: '1 0 auto',
             width: '100%'
         }
     }),
@@ -27,15 +28,13 @@ const useStyles = makeStyles((theme: Theme) =>
 const Layout: FunctionComponent = ({children}) => {
     const classes = useStyles();
     return (
-        <Fragment>
+        <div className={classes.root}>
             <Header/>
-            <div className={classes.root}>
-                <div className={classes.map}>
-                    {children}
-                </div>
-                <Footer/>
+            <div className={classes.map}>
+                {children}
             </div>
-        </Fragment>
+            <Footer/>
+        </div>
     )
 };
 

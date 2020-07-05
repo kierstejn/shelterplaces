@@ -1,8 +1,8 @@
-
 interface LocationCreate {
-    lng: number
+    userId: string
     lat: number
-    displayName?: string
+    lng: number
+    displayName: string
     title: string
     description: string
 }

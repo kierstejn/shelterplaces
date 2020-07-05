@@ -1,5 +1,5 @@
 
-export interface AddressGeoResult {
+export interface GeocodedAddress {
     lat: string,
     lon: string,
     display_name?: string,
@@ -15,3 +15,4 @@ export interface AddressGeoResult {
         country_code?: string
     }
 }
+

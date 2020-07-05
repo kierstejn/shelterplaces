@@ -1,4 +1,5 @@
 const dev = {
+    serverUrl: 'http://localhost:5000',
     locationIq: {
         token: ''
     },
@@ -8,6 +9,7 @@ const dev = {
 };
 
 const prod = {
+    serverUrl: '',
     locationIq: {
         token: '42871ecde74384'
     },

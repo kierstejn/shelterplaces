@@ -20,10 +20,10 @@ export const getAddressFromCoordinates = (lat: string, lng: string) => {
     );
 };
 
-// Get address from latitude & longitude.
+// Get geocoding from latitude & longitude.
 
 
-// Get latitude & longitude from address.
+// Get latitude & longitude from geocoding.
 // Geocode.fromAddress("Eiffel Tower").then(
 //     response => {
 //         const { lat, lng } = response.results[0].geometry.location;

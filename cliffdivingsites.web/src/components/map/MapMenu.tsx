@@ -11,7 +11,7 @@ import axios from 'axios';
 import { useHistory } from "react-router-dom";
 
 import config from "../../config";
-import {AddressGeoResult} from "../../models/address/AddressGeoResult";
+import {GeocodedLocationResult} from "../../models/geocoding/GeocodedLocationResult";
 
 const useStyles = makeStyles({
     card: {
@@ -49,8 +49,8 @@ const MapMenu: FunctionComponent<Props> = ({lat, lng}) => {
     const classes = useStyles();
     const history = useHistory();
 
-    const [loadingAddress, setLoadingAddress] = useState<boolean>(false);
-    const [address, setAddress] = useState<AddressGeoResult | null>(null);
+    const [isGeocoding, setIsGeocoding] = useState<boolean>(false);
+    const [location, setLocation] = useState<GeocodedLocationResult | null>(null);
     const [error, setError] = useState<boolean>(false);
 
     const handleClick = (event: any) => {
@@ -64,25 +64,30 @@ const MapMenu: FunctionComponent<Props> = ({lat, lng}) => {
         event.preventDefault();
         history.push({
             pathname: '/sites/create',
-            state: address
+            state: location
         })
     };
 
     useEffect(() => {
-        setLoadingAddress(true);
-        setAddress(null);
+        setIsGeocoding(true);
+        setLocation(null);
         setError(false);
         axios(`https://eu1.locationiq.com/v1/reverse.php?key=${config.locationIq.token}&lat=${lat.toString()}&lon=${lng.toString()}&format=json`)
             .then((res: any) => {
                 console.log(res);
-                setAddress(res.data);
-                setLoadingAddress(false);
+                const location: GeocodedLocationResult = {
+                    lat: lat,
+                    lng: lng,
+                    address: {...res.data}
+                };
+                setLocation(location);
+                setIsGeocoding(false);
             })
             .catch((err) => {
                 console.log(err);
                 setError(true);
-                setAddress({lat: lat.toString(), lon: lng.toString()});
-                setLoadingAddress(false);
+                setLocation({lat: lat, lng: lng});
+                setIsGeocoding(false);
             })
     }, [lat, lng]);
 
@@ -95,24 +100,24 @@ const MapMenu: FunctionComponent<Props> = ({lat, lng}) => {
             <Card className={classes.card} raised onClick={handleClick}>
 
                 <CardContent>
-                    {loadingAddress && !address &&
+                    {isGeocoding && !location &&
                         <CircularProgress/>
                     }
-                    {address && !error &&
+                    {location && location.address && !error &&
                         <Typography variant="body2" component="p">
-                            {address.display_name}
+                            {location.address.display_name}
                         </Typography>
                     }
-                    {address && error &&
+                    {location && error &&
                         <Fragment>
                             <Typography variant="body2" component="p">
                                 {"No location service available"}
                             </Typography>
                             <Typography variant="body2" component="p">
-                                {`Latitude: ${address.lat}`}
+                                {`Latitude: ${lat}`}
                             </Typography>
                             <Typography variant="body2" component="p">
-                                {`Longtitude: ${address.lon}`}
+                                {`Longtitude: ${lng}`}
                             </Typography>
                         </Fragment>
                     }
@@ -121,7 +126,7 @@ const MapMenu: FunctionComponent<Props> = ({lat, lng}) => {
                     <Button
                         size="small"
                         onClick={handleCreateClicked}
-                        disabled={!address || loadingAddress}
+                        disabled={!location || isGeocoding}
                     >
                         Create new site
                     </Button>

@@ -4,8 +4,12 @@ import {makeStyles} from "@material-ui/core/styles";
 import {Button, CssBaseline, Grid, Paper, TextField, Typography} from "@material-ui/core";
 import {useAuth0} from "@auth0/auth0-react";
 import { useLocation } from 'react-router-dom';
-import {AddressGeoResult} from "../models/address/AddressGeoResult";
+import {GeocodedAddress} from "../models/geocoding/GeocodedAddress";
 import {useForm} from "react-hook-form";
+import {GeocodedLocationResult} from "../models/geocoding/GeocodedLocationResult";
+
+import axios from "../axios";
+import LocationCreate from "../models/location/LocationCreate";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -44,17 +48,35 @@ const CreateSitePage = () => {
     const { user } = useAuth0();
     const location = useLocation();
     const { register, errors, handleSubmit } = useForm<FormData>();
-    const [address, setAddress] = useState<AddressGeoResult | null>(null);
-
-    const onSubmit = (data: FormData) => {
-        console.log(data)
-    };
+    const [geoLocation, setGeoLocation] = useState<GeocodedLocationResult | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const [submitError, setSubmitError] = useState<string>('');
 
     useEffect(() => {
         const state = location.state;
         // @ts-ignore
-        setAddress(state)
+        setGeoLocation(state)
     }, [location]);
+
+    const onSubmit = async (formData: FormData) => {
+        if(!geoLocation){
+            return;
+        }
+        const data: LocationCreate = {
+            lat: geoLocation.lat,
+            lng: geoLocation.lat,
+            displayName: geoLocation.address?.display_name,
+            title: formData.title,
+            description: formData.description
+        };
+        try {
+            const response = await axios.post('/sites', data);
+            console.log(response)
+        } catch (e) {
+            console.log(e)
+        }
+
+    };
 
     return (
         <Fragment>
@@ -65,14 +87,14 @@ const CreateSitePage = () => {
                         <Typography component="h2" variant="h6" color="primary" gutterBottom>
                             Create new site
                         </Typography>
-                        {address && address.display_name &&
+                        {geoLocation && geoLocation.address &&
                             <Typography variant="body2" component="p" gutterBottom>
-                                {address?.display_name}
+                                {geoLocation.address.display_name}
                             </Typography>
                         }
-                        {address && !address.display_name &&
+                        {geoLocation && !geoLocation.address &&
                             <Typography variant="body2" component="p">
-                                {`Latitude: ${address.lat} - Longtitude: ${address.lon}`}
+                                {`Latitude: ${geoLocation.lat} - Longtitude: ${geoLocation.lng}`}
                             </Typography>
                         }
                         <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
@@ -85,10 +107,9 @@ const CreateSitePage = () => {
                                 name={'title'}
                                 className={classes.inputField}
                                 style={{marginTop: 10}}
-
-
                             />
                             <TextField
+                                required
                                 id="description"
                                 label="Description"
                                 multiline
@@ -97,8 +118,6 @@ const CreateSitePage = () => {
                                 rows={4}
                                 variant="outlined"
                                 className={classes.inputField}
-
-
                             />
                             <Button
                                 type={'submit'}

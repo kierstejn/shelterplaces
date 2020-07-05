@@ -105,7 +105,6 @@ const IndexPage: FunctionComponent = () => {
         //navigator.geolocation.watchPosition((position => watchPositionSuccess(position)));
 
         maps.event.addListener(map, 'mousedown', function(event: any){
-            console.log('mouseDwn')
             setLongHold(false)
             timeout = setTimeout(function(){
                 const lat = event.latLng.lat();
@@ -117,13 +116,12 @@ const IndexPage: FunctionComponent = () => {
         });
 
         maps.event.addListener(map, 'mouseup', function(event: any){
-            console.log('mouseUp')
             if(timeout){
                 clearTimeout(timeout);
             }
         });
 
-        maps.event.addListener(map, 'dragstart', function (event:any) {
+        maps.event.addListener(map, 'drag', function (event:any) {
             console.log('dragStart')
             if(timeout){
                 clearTimeout(timeout);

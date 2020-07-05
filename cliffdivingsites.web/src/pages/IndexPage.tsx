@@ -44,12 +44,11 @@ const IndexPage: FunctionComponent = () => {
     };
 
     const handleMapClick = (event: any) => {
-        console.log(longHold)
         if(selectedLocation){
             setSelectedLocation(null)
         }
         if(rightClick && !longHold){
-            console.log('jaja')
+
             setRightClick(null)
         }
     };
@@ -103,6 +102,7 @@ const IndexPage: FunctionComponent = () => {
         let mousedUp: boolean;
         let longHold: boolean;
         let drag: boolean;
+
         maps.event.addListener(map, "rightclick", function(event: any) {
             const lat = event.latLng.lat();
             const lng = event.latLng.lng();
@@ -110,10 +110,9 @@ const IndexPage: FunctionComponent = () => {
             setRightClick({coordinates: {lng: lng, lat: lat}});
         });
 
-        navigator.geolocation.watchPosition((position => watchPositionSuccess(position)));
+        //navigator.geolocation.watchPosition((position => watchPositionSuccess(position)));
 
         maps.event.addListener(map, 'mousedown', function(event: any){
-            console.log(event.tb.target);
             mousedUp = false;
             longHold = false;
             drag = false;
@@ -129,6 +128,7 @@ const IndexPage: FunctionComponent = () => {
                 }
             }, 500);
         });
+        
         maps.event.addListener(map, 'mouseup', function(event: any){
             mousedUp = true;
         });
@@ -136,6 +136,14 @@ const IndexPage: FunctionComponent = () => {
         maps.event.addListener(map, 'dragstart', function (event:any) {
             drag = true;
         })
+    };
+
+    const createMapOptions = (maps: any) => {
+        return {
+            panControl: false,
+            mapTypeControl: false,
+            scrollwheel: false,
+        }
     };
 
 
@@ -156,6 +164,8 @@ const IndexPage: FunctionComponent = () => {
                 onChildClick={handleLocationSelect}
                 yesIWantToUseGoogleMapApiInternals
                 onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
+                options={createMapOptions}
+
             >
                 {locationPins}
                 {selectedLocation &&

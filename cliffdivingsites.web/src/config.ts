@@ -1,9 +1,9 @@
 const dev = {
     locationIq: {
-        token: '42871ecde74384'
+        token: ''
     },
     google: {
-        apiKey: ''
+        apiKey: 'AIzaSyCnJaUXeaK95zS4ivA7xTmlKaiuWA9Mf_k'
     }
 };
 

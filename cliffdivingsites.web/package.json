@@ -26,6 +26,7 @@
     "connected-react-router": "^6.8.0",
     "google-map-react": "^1.1.7",
     "react": "^16.13.1",
+    "react-device-detect": "^1.13.1",
     "react-dom": "^16.13.1",
     "react-geocode": "^0.2.1",
     "react-google-maps": "^9.4.5",

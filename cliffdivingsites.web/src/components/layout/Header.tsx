@@ -14,7 +14,7 @@ import Menu from '@material-ui/core/Menu';
 import {useOktaAuth} from "@okta/okta-react";
 import {Button, CircularProgress, Link} from "@material-ui/core";
 import { useAuth0 } from "@auth0/auth0-react";
-import {useHistory} from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -76,9 +76,7 @@ const Header: FunctionComponent = () => {
             <AppBar position="static" className={classes.appBar}>
                 <Toolbar className={classes.toolBar}>
                     <Link onClick={() => history.push('/')} variant="h4" className={classes.title}>
-
-                            CliffDivingSites
-
+                        CliffDivingSites
                     </Link>
                     <div>
                         <Button

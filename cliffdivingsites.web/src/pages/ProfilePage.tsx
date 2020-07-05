@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { useOktaAuth } from '@okta/okta-react';
 import Container from '@material-ui/core/Container';
 import {makeStyles} from "@material-ui/core/styles";
@@ -9,7 +9,6 @@ const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
     },
-
     container: {
         paddingTop: theme.spacing(4),
         paddingBottom: theme.spacing(4),
@@ -30,7 +29,7 @@ const ProfilePage = () => {
 
     console.log(user)
     return (
-        <div>
+        <Fragment>
             <CssBaseline/>
             <Container maxWidth="lg" className={classes.container}>
                 <Grid container spacing={3}>
@@ -60,7 +59,7 @@ const ProfilePage = () => {
                 </Grid>
 
             </Container>
-        </div>
+        </Fragment>
     );
 };
 

@@ -2,18 +2,20 @@ import React, {Fragment, FunctionComponent} from 'react';
 import { Provider } from "react-redux";
 import configureStore, { history } from './configureStore'
 import {ConnectedRouter} from "connected-react-router";
-
-// @ts-ignore
 import { ThemeProvider } from '@material-ui/core';
-import theme from "./util/theme/theme";
 import {Route, BrowserRouter as Router, useHistory} from "react-router-dom";
-import IndexPage from "./pages/IndexPage";
-
-import config from "./config";
-import Layout from "./components/layout/Layout";
-
 import { Auth0Provider, withAuthenticationRequired } from "@auth0/auth0-react";
+
+//Pages
+import IndexPage from "./pages/IndexPage";
 import ProfilePage from "./pages/ProfilePage";
+import CreateSitePage from "./pages/CreateSitePage";
+
+//Util
+import theme from "./util/theme/theme";
+import Layout from "./components/layout/Layout";
+import config from "./config";
+
 
 const store = configureStore();
 
@@ -48,6 +50,7 @@ function App() {
                 <Layout>
                     <Route path='/' exact={true} component={IndexPage}/>
                     <ProtectedRoute path={'/profile'} component={ProfilePage} />
+                    <ProtectedRoute path={'/sites/create'} component={CreateSitePage} />
                 </Layout>
             </Auth0Provider>
         );

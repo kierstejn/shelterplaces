@@ -6,6 +6,7 @@ const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             height: '50px',
+            minHeight: '50px',
             backgroundColor: theme.palette.secondary.main,
             display: 'flex',
             justifyContent: 'center'

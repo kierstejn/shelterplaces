@@ -1,19 +1,17 @@
-import React, {FunctionComponent, useEffect, useState} from 'react';
+import React, {FunctionComponent, useEffect, useState, Fragment} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import {ButtonBaseActions, CircularProgress} from "@material-ui/core";
+import { CircularProgress } from "@material-ui/core";
 import ClearIcon from "@material-ui/icons/Clear";
-import {getAddressFromCoordinates} from "../../util/geocoder";
-
 import axios from 'axios';
+import { useHistory } from "react-router-dom";
+
 import config from "../../config";
-
-
-
+import {AddressGeoResult} from "../../models/address/AddressGeoResult";
 
 const useStyles = makeStyles({
     card: {
@@ -45,25 +43,43 @@ interface Props {
     lng: number
 }
 
-
-
 const MapMenu: FunctionComponent<Props> = ({lat, lng}) => {
+
     const classes = useStyles();
+    const history = useHistory();
 
     const [loadingAddress, setLoadingAddress] = useState<boolean>(false);
-    const [address, setAddress] = useState<string>('');
+    const [address, setAddress] = useState<AddressGeoResult | null>(null);
+    const [error, setError] = useState<boolean>(false);
 
     const handleClick = (event: any) => {
         event.stopPropagation();
         event.preventDefault();
     };
 
+    const handleCreateClicked = (event: any) => {
+        event.stopPropagation();
+        event.preventDefault();
+        history.push({
+            pathname: '/sites/create',
+            state: address
+        })
+    };
+
     useEffect(() => {
         setLoadingAddress(true);
+        setAddress(null);
+        setError(false);
         axios(`https://eu1.locationiq.com/v1/reverse.php?key=${config.locationIq.token}&lat=${lat.toString()}&lon=${lng.toString()}&format=json`)
             .then((res: any) => {
                 console.log(res);
-                setAddress(res.data.display_name);
+                setAddress(res.data);
+                setLoadingAddress(false);
+            })
+            .catch((err) => {
+                console.log(err);
+                setError(true);
+                setAddress({lat: lat.toString(), lon: lng.toString()});
                 setLoadingAddress(false);
             })
     }, [lat, lng]);
@@ -80,16 +96,29 @@ const MapMenu: FunctionComponent<Props> = ({lat, lng}) => {
                     {loadingAddress && !address &&
                         <CircularProgress/>
                     }
-                    {address &&
+                    {address && !error &&
                         <Typography variant="body2" component="p">
-                            {address}
+                            {address.display_name}
                         </Typography>
+                    }
+                    {address && error &&
+                        <Fragment>
+                            <Typography variant="body2" component="p">
+                                {"No location service available"}
+                            </Typography>
+                            <Typography variant="body2" component="p">
+                                {`Latitude: ${address.lat}`}
+                            </Typography>
+                            <Typography variant="body2" component="p">
+                                {`Longtitude: ${address.lon}`}
+                            </Typography>
+                        </Fragment>
                     }
                 </CardContent>
                 <CardActions>
                     <Button
                         size="small"
-                        onClick={handleClick}
+                        onClick={handleCreateClicked}
                         disabled={!address || loadingAddress}
                     >
                         Create new site

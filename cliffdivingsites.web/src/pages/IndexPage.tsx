@@ -79,16 +79,6 @@ const IndexPage: FunctionComponent = () => {
         }
     });
 
-    useEffect(() => {
-        if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                setCoordinates({lat: position.coords.latitude, lng: position.coords.longitude});
-                setPersonalCoordinates({lat: position.coords.latitude, lng: position.coords.longitude});
-                setZoom(7);
-            });
-        }
-    });
-
 
     const handleApiLoaded = (map: any, maps: any) => {
 
@@ -96,6 +86,14 @@ const IndexPage: FunctionComponent = () => {
         let longHold: boolean;
         let drag: boolean;
         let timeout: any;
+
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                setCoordinates({lat: position.coords.latitude, lng: position.coords.longitude});
+                setPersonalCoordinates({lat: position.coords.latitude, lng: position.coords.longitude});
+                setZoom(7);
+            });
+        }
 
         maps.event.addListener(map, "rightclick", function(event: any) {
             const lat = event.latLng.lat();
@@ -132,13 +130,11 @@ const IndexPage: FunctionComponent = () => {
 
     const createMapOptions = (maps: any) => {
         return {
-            panControl: false,
+            panControl: true,
             mapTypeControl: false,
-            scrollwheel: false,
+            scrollwheel: true,
         }
     };
-
-
 
     return (
         <div style={{display: 'flex', flexDirection: 'column', flexGrow: 1}} >

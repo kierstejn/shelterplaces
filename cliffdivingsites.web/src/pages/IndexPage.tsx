@@ -48,7 +48,6 @@ const IndexPage: FunctionComponent = () => {
             setSelectedLocation(null)
         }
         if(rightClick && !longHold){
-
             setRightClick(null)
         }
     };
@@ -96,6 +95,7 @@ const IndexPage: FunctionComponent = () => {
         let mousedUp: boolean;
         let longHold: boolean;
         let drag: boolean;
+        let timeout: any;
 
         maps.event.addListener(map, "rightclick", function(event: any) {
             const lat = event.latLng.lat();
@@ -107,28 +107,26 @@ const IndexPage: FunctionComponent = () => {
         //navigator.geolocation.watchPosition((position => watchPositionSuccess(position)));
 
         maps.event.addListener(map, 'mousedown', function(event: any){
-            mousedUp = false;
-            longHold = false;
-            drag = false;
             setLongHold(false)
-            setTimeout(function(){
-                if(!mousedUp && !drag){
-                    longHold = true;
-                    const lat = event.latLng.lat();
-                    const lng = event.latLng.lng();
-                    setSelectedLocation(null);
-                    setRightClick({coordinates: {lng: lng, lat: lat}});
-                    setLongHold(true)
-                }
+            timeout = setTimeout(function(){
+                const lat = event.latLng.lat();
+                const lng = event.latLng.lng();
+                setSelectedLocation(null);
+                setRightClick({coordinates: {lng: lng, lat: lat}});
+                setLongHold(true)
             }, 500);
         });
 
         maps.event.addListener(map, 'mouseup', function(event: any){
-            mousedUp = true;
+            if(timeout){
+                clearTimeout(timeout);
+            }
         });
 
         maps.event.addListener(map, 'dragstart', function (event:any) {
-            drag = true;
+            if(timeout){
+                clearTimeout(timeout);
+            }
         })
     };
 

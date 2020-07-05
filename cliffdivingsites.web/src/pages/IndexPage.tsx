@@ -80,11 +80,6 @@ const IndexPage: FunctionComponent = () => {
         }
     });
 
-    const watchPositionSuccess = (position: any) => {
-        setPersonalCoordinates({lat: position.coords.latitude, lng: position.coords.longitude});
-    };
-
-
     useEffect(() => {
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(function(position) {
@@ -92,7 +87,6 @@ const IndexPage: FunctionComponent = () => {
                 setPersonalCoordinates({lat: position.coords.latitude, lng: position.coords.longitude});
                 setZoom(7);
             });
-            navigator.geolocation.watchPosition((position => watchPositionSuccess(position)))
         }
     });
 
@@ -128,7 +122,7 @@ const IndexPage: FunctionComponent = () => {
                 }
             }, 500);
         });
-        
+
         maps.event.addListener(map, 'mouseup', function(event: any){
             mousedUp = true;
         });

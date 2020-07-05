@@ -91,7 +91,7 @@ const IndexPage: FunctionComponent = () => {
             navigator.geolocation.getCurrentPosition(function(position) {
                 setCoordinates({lat: position.coords.latitude, lng: position.coords.longitude});
                 setPersonalCoordinates({lat: position.coords.latitude, lng: position.coords.longitude});
-                setZoom(7);
+                setZoom(6);
             });
         }
 
@@ -105,6 +105,7 @@ const IndexPage: FunctionComponent = () => {
         //navigator.geolocation.watchPosition((position => watchPositionSuccess(position)));
 
         maps.event.addListener(map, 'mousedown', function(event: any){
+            console.log('mouseDwn')
             setLongHold(false)
             timeout = setTimeout(function(){
                 const lat = event.latLng.lat();
@@ -116,12 +117,20 @@ const IndexPage: FunctionComponent = () => {
         });
 
         maps.event.addListener(map, 'mouseup', function(event: any){
+            console.log('mouseUp')
             if(timeout){
                 clearTimeout(timeout);
             }
         });
 
         maps.event.addListener(map, 'dragstart', function (event:any) {
+            console.log('dragStart')
+            if(timeout){
+                clearTimeout(timeout);
+            }
+        })
+        maps.event.addListener(map, 'zoom_changed', function (event:any) {
+            console.log('zoom_changed')
             if(timeout){
                 clearTimeout(timeout);
             }
@@ -146,7 +155,7 @@ const IndexPage: FunctionComponent = () => {
                 }}
                 defaultCenter={{ lat: 50, lng: 0 }}
                 center={{ lat: coordinates.lat, lng: coordinates.lng }}
-                defaultZoom={2}
+                defaultZoom={4}
                 zoom={zoom}
                 onClick={handleMapClick}
                 onChildClick={handleLocationSelect}

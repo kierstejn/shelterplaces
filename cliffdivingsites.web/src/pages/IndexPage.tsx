@@ -107,11 +107,13 @@ const IndexPage: FunctionComponent = () => {
         maps.event.addListener(map, 'mousedown', function(event: any){
             setLongHold(false)
             timeout = setTimeout(function(){
-                const lat = event.latLng.lat();
-                const lng = event.latLng.lng();
-                setSelectedLocation(null);
-                setRightClick({coordinates: {lng: lng, lat: lat}});
-                setLongHold(true)
+                if(!drag) {
+                    const lat = event.latLng.lat();
+                    const lng = event.latLng.lng();
+                    setSelectedLocation(null);
+                    setRightClick({coordinates: {lng: lng, lat: lat}});
+                    setLongHold(true)
+                }
             }, 500);
         });
 
@@ -121,18 +123,26 @@ const IndexPage: FunctionComponent = () => {
             }
         });
 
+        maps.event.addListener(map, 'dragStart', function (event:any) {
+            console.log('dragStart');
+            clearTimeout(timeout);
+        });
+
         maps.event.addListener(map, 'drag', function (event:any) {
-            console.log('dragStart')
-            if(timeout){
-                clearTimeout(timeout);
-            }
-        })
+            console.log('dragStart');
+            drag = true;
+            clearTimeout(timeout);
+        });
+
+        maps.event.addListener(map, 'dragend', function (event:any) {
+            console.log('dragend');
+            drag = false
+        });
+
         maps.event.addListener(map, 'zoom_changed', function (event:any) {
-            console.log('zoom_changed')
-            if(timeout){
-                clearTimeout(timeout);
-            }
-        })
+            console.log('zoom_changed');
+            clearTimeout(timeout);
+        });
     };
 
     const createMapOptions = (maps: any) => {

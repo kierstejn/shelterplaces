@@ -33,20 +33,22 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-interface FormInputs {
-    title: string
-    description: string
-}
+type FormData = {
+    title: string;
+    description: string;
+};
 
 const CreateSitePage = () => {
 
     const classes = useStyles();
     const { user } = useAuth0();
     const location = useLocation();
-    const { register, errors, handleSubmit } = useForm<FormInputs>();
+    const { register, errors, handleSubmit } = useForm<FormData>();
     const [address, setAddress] = useState<AddressGeoResult | null>(null);
 
-    const onSubmit = (data: any) => console.log(data);
+    const onSubmit = (data: FormData) => {
+        console.log(data)
+    };
 
     useEffect(() => {
         const state = location.state;
@@ -79,20 +81,24 @@ const CreateSitePage = () => {
                                 id="title"
                                 label="Title"
                                 variant="outlined"
-                                ref={register}
+                                inputRef={register}
                                 name={'title'}
                                 className={classes.inputField}
                                 style={{marginTop: 10}}
+
+
                             />
                             <TextField
                                 id="description"
                                 label="Description"
                                 multiline
                                 name={'description'}
-                                ref={register}
+                                inputRef={register}
                                 rows={4}
                                 variant="outlined"
                                 className={classes.inputField}
+
+
                             />
                             <Button
                                 type={'submit'}

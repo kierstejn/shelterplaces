@@ -17,24 +17,25 @@ const useStyles = makeStyles({
     card: {
         width: 230,
         position: 'absolute',
-        left: 10,
-        bottom: 30
+        left: 20,
+        bottom: 40,
+        zIndex: 100
     },
     icon: {
         position: 'relative',
         fontSize: 20,
         color: 'red',
-        bottom: 5,
-        left: 10
+        bottom: 15,
+        left: 20
     },
     div: {
         display: 'flex',
         flexDirection: 'column-reverse',
-        width: 250,
-        minHeight: 120,
+        width: 280,
+        minHeight: 170,
         position: 'absolute',
-        left: -20,
-        bottom: -15,
+        left: -30,
+        bottom: -25,
     }
 });
 
@@ -58,6 +59,7 @@ const MapMenu: FunctionComponent<Props> = ({lat, lng}) => {
     };
 
     const handleCreateClicked = (event: any) => {
+        console.log('create clicked')
         event.stopPropagation();
         event.preventDefault();
         history.push({

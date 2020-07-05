@@ -29,24 +29,27 @@ const IndexPage: FunctionComponent = () => {
     const [rightClick, setRightClick] = useState<RightClickProps | null>(null);
     const [coordinates, setCoordinates] = useState<CoordinatesProps>({lat: 40, lng: 0});
     const [personalCoordinates, setPersonalCoordinates] = useState<CoordinatesProps | null>(null);
+    const [longHold, setLongHold] = useState(false);
     const [zoom, setZoom] = useState(2);
     const { isAuthenticated } = useAuth0();
 
 
-    const handleLocationSelect = (key: string, location: ChildComponentProps & LocationRead) => {
-        if(rightClick){
+    const handleLocationSelect = (key: string, location: any) => {
+        if(rightClick && !longHold){
             setRightClick(null)
         }
-        setSelectedLocation(location)
-        setCoordinates({lat: location.lat, lng: location.lng});
-        setZoom(7);
+        if(location.location){
+            setSelectedLocation(location);
+        }
     };
 
-    const handleMapClick = () => {
+    const handleMapClick = (event: any) => {
+        console.log(longHold)
         if(selectedLocation){
             setSelectedLocation(null)
         }
-        if(rightClick){
+        if(rightClick && !longHold){
+            console.log('jaja')
             setRightClick(null)
         }
     };
@@ -96,15 +99,43 @@ const IndexPage: FunctionComponent = () => {
 
 
     const handleApiLoaded = (map: any, maps: any) => {
+
+        let mousedUp: boolean;
+        let longHold: boolean;
+        let drag: boolean;
         maps.event.addListener(map, "rightclick", function(event: any) {
             const lat = event.latLng.lat();
             const lng = event.latLng.lng();
-            setCoordinates({lat: lat, lng: lng});
-            setZoom(7);
             setSelectedLocation(null);
             setRightClick({coordinates: {lng: lng, lat: lat}});
         });
-        navigator.geolocation.watchPosition((position => watchPositionSuccess(position)))
+
+        navigator.geolocation.watchPosition((position => watchPositionSuccess(position)));
+
+        maps.event.addListener(map, 'mousedown', function(event: any){
+            console.log(event.tb.target);
+            mousedUp = false;
+            longHold = false;
+            drag = false;
+            setLongHold(false)
+            setTimeout(function(){
+                if(!mousedUp && !drag){
+                    longHold = true;
+                    const lat = event.latLng.lat();
+                    const lng = event.latLng.lng();
+                    setSelectedLocation(null);
+                    setRightClick({coordinates: {lng: lng, lat: lat}});
+                    setLongHold(true)
+                }
+            }, 500);
+        });
+        maps.event.addListener(map, 'mouseup', function(event: any){
+            mousedUp = true;
+        });
+
+        maps.event.addListener(map, 'dragstart', function (event:any) {
+            drag = true;
+        })
     };
 
 
@@ -121,8 +152,8 @@ const IndexPage: FunctionComponent = () => {
                 center={{ lat: coordinates.lat, lng: coordinates.lng }}
                 defaultZoom={2}
                 zoom={zoom}
-                onChildClick={handleLocationSelect}
                 onClick={handleMapClick}
+                onChildClick={handleLocationSelect}
                 yesIWantToUseGoogleMapApiInternals
                 onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
             >

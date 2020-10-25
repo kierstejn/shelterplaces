@@ -3,6 +3,7 @@ import React, {FunctionComponent, Fragment} from 'react';
 import Header from "./Header";
 import Footer from "./Footer";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
+import SnackBar from "../snackBar/SnackBar";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

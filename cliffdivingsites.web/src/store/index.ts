@@ -5,17 +5,24 @@ import { History } from 'history'
 
 //SAGAS
 import authenticationSaga from "./auth/sagas";
-import {connectRouter} from "connected-react-router";
+import { connectRouter } from "connected-react-router";
+import { snackBarReducer, SnackBarState } from "./snackBar/reducer";
+import { MapState, mapReducer } from "./map/reducer";
+
 
 
 export interface ApplicationState {
     authentication: AuthenticationState
+    snackBar: SnackBarState
+    map: MapState
 }
 
 export const createRootReducer = (history: History) =>
     combineReducers({
         authentication: authenticationReducer,
-        router: connectRouter(history)
+        router: connectRouter(history),
+        snackBar: snackBarReducer,
+        map: mapReducer
 });
 
 export function* rootSaga() {

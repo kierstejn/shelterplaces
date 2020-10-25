@@ -1,7 +1,7 @@
 const dev = {
     serverUrl: 'http://localhost:5000',
     locationIq: {
-        token: ''
+        token: '42871ecde74384'
     },
     google: {
         apiKey: 'AIzaSyCnJaUXeaK95zS4ivA7xTmlKaiuWA9Mf_k'

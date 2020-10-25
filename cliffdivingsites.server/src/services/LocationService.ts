@@ -13,3 +13,4 @@ export const createLocation = (location: LocationCreate): Promise<string> => {
             description: location.description
         })
 };
+

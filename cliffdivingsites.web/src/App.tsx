@@ -15,6 +15,7 @@ import CreateSitePage from "./pages/CreateSitePage";
 import theme from "./util/theme/theme";
 import Layout from "./components/layout/Layout";
 import config from "./config";
+import SnackBar from "./components/snackBar/SnackBar";
 
 
 const store = configureStore();
@@ -39,13 +40,14 @@ function App() {
             // Use the router's history module to replace the url
             history.replace(appState?.returnTo || window.location.pathname);
         };
-
+        
         return (
             <Auth0Provider
                 domain="dev-5leq0ojb.eu.auth0.com"
                 clientId="LLLMxnAvBOMR7yrzsxHblOj8w3nw3EWL"
                 redirectUri={window.location.origin}
                 onRedirectCallback={onRedirectCallback}
+                audience={'http://cliffdivingsites/api'}
             >
                 <Layout>
                     <Route path='/' exact={true} component={IndexPage}/>
@@ -61,6 +63,7 @@ function App() {
       <Provider store={store}>
           <ThemeProvider theme={theme}>
               <Router>
+                  <SnackBar/>
                   <HasAccessToRouter/>
               </Router>
           </ThemeProvider>

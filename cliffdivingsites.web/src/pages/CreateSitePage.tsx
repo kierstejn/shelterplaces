@@ -1,15 +1,22 @@
 import React, {useEffect, useState, Fragment} from 'react';
 import Container from '@material-ui/core/Container';
 import {makeStyles} from "@material-ui/core/styles";
-import {Button, CssBaseline, Grid, Paper, TextField, Typography} from "@material-ui/core";
-import {useAuth0} from "@auth0/auth0-react";
-import { useLocation } from 'react-router-dom';
-import {GeocodedAddress} from "../models/geocoding/GeocodedAddress";
-import {useForm} from "react-hook-form";
-import {GeocodedLocationResult} from "../models/geocoding/GeocodedLocationResult";
+import {Button, CssBaseline, Grid, Paper, TextField, Typography, CircularProgress} from "@material-ui/core";
+import { useAuth0 } from "@auth0/auth0-react";
+import { useLocation, useHistory } from 'react-router-dom';
+import { GeocodedAddress } from "../models/geocoding/GeocodedAddress";
+import { useForm } from "react-hook-form";
+import { GeocodedLocationResult } from "../models/geocoding/GeocodedLocationResult";
 
 import axios from "../axios";
 import LocationCreate from "../models/location/LocationCreate";
+
+//Redux
+import {useDispatch} from "react-redux";
+import {showSnackBar, SnackBarActionTypes} from '../store/snackBar/actions';
+import { MessageTypes } from '../models/snackBar/snackBar';
+
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -34,6 +41,9 @@ const useStyles = makeStyles((theme) => ({
     },
     submitButton: {
         width: 100
+    },
+    circularProgress: {
+        color: 'white'
     }
 }));
 
@@ -45,15 +55,21 @@ type FormData = {
 const CreateSitePage = () => {
 
     const classes = useStyles();
-    const { user } = useAuth0();
+    const { user, getAccessTokenSilently } = useAuth0();
     const location = useLocation();
+    const history = useHistory();
     const { register, errors, handleSubmit } = useForm<FormData>();
     const [geoLocation, setGeoLocation] = useState<GeocodedLocationResult | null>(null);
+    const dispatch = useDispatch();
+
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [submitError, setSubmitError] = useState<string>('');
 
     useEffect(() => {
         const state = location.state;
+        if(!state){
+            history.push('/')
+        }
         // @ts-ignore
         setGeoLocation(state)
     }, [location]);
@@ -62,6 +78,8 @@ const CreateSitePage = () => {
         if(!geoLocation){
             return;
         }
+        setIsSubmitting(true);
+        const token = await getAccessTokenSilently();
         const data: LocationCreate = {
             lat: geoLocation.lat,
             lng: geoLocation.lat,
@@ -70,12 +88,17 @@ const CreateSitePage = () => {
             description: formData.description
         };
         try {
-            const response = await axios.post('/sites', data);
-            console.log(response)
+            const response = await axios.post('/sites', data, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            dispatch(showSnackBar({message: 'Site was successfully created!', messageType: MessageTypes.Success}));
+            history.push('/');
         } catch (e) {
-            console.log(e)
+            dispatch(showSnackBar({message: 'Error occurred!', messageType: MessageTypes.Error}));
+            setSubmitError(e);
+        } finally {
+            setIsSubmitting(false)
         }
-
     };
 
     return (
@@ -125,8 +148,9 @@ const CreateSitePage = () => {
                                 fullWidth={false}
                                 variant={'contained'}
                                 className={classes.submitButton}
+                                disabled={isSubmitting}
                             >
-                                Create
+                                {!isSubmitting ? 'Create' : <CircularProgress size={20} className={classes.circularProgress}/>}
                             </Button>
                         </form>
                     </Paper>

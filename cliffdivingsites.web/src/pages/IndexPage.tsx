@@ -1,7 +1,10 @@
-import React, {FunctionComponent, useState, Fragment, useEffect} from 'react'
+import React, { FunctionComponent, useState, Fragment, useEffect } from 'react'
 import { CssBaseline } from "@material-ui/core";
-import GoogleMapReact, {ChildComponentProps, Coords} from "google-map-react";
-import {useAuth0} from "@auth0/auth0-react";
+import GoogleMapReact, { ChildComponentProps, Coords } from "google-map-react";
+import { useAuth0 } from "@auth0/auth0-react";
+import { useDispatch, useSelector } from "react-redux";
+import { debounce } from 'lodash'
+
 
 //Models
 import {LocationRead} from "../models/location/LocationRead";
@@ -11,8 +14,14 @@ import Pin from '../components/map/Pin'
 import LocationCard from "../components/map/LocationCard";
 import MapMenu from "../components/map/MapMenu";
 
+//Reduxç
+import { setCoordinates as setStoreCoordinates, setZoom as setStoreZoom } from '../store/map/actions'
+import { ApplicationState } from '../store';
+
+
 import config from "../config";
 import PersonPin from "../components/map/PersonPin";
+
 
 interface RightClickProps {
     coordinates: Coords
@@ -25,13 +34,18 @@ interface CoordinatesProps {
 
 const IndexPage: FunctionComponent = () => {
 
+    const { isAuthenticated } = useAuth0();
+    const dispatch = useDispatch();
+
+    const storeCoordinates = useSelector((state: ApplicationState) => state.map.coordinates);
+    const storeZoom = useSelector((state: ApplicationState) => state.map.zoom);
+
     const [selectedLocation, setSelectedLocation] = useState<LocationRead | null>(null);
     const [rightClick, setRightClick] = useState<RightClickProps | null>(null);
     const [coordinates, setCoordinates] = useState<CoordinatesProps>({lat: 40, lng: 0});
     const [personalCoordinates, setPersonalCoordinates] = useState<CoordinatesProps | null>(null);
     const [longHold, setLongHold] = useState(false);
     const [zoom, setZoom] = useState(2);
-    const { isAuthenticated } = useAuth0();
 
 
     const handleLocationSelect = (key: string, location: any) => {
@@ -87,13 +101,13 @@ const IndexPage: FunctionComponent = () => {
         let drag: boolean;
         let timeout: any;
 
-        if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                setCoordinates({lat: position.coords.latitude, lng: position.coords.longitude});
-                setPersonalCoordinates({lat: position.coords.latitude, lng: position.coords.longitude});
-                setZoom(6);
-            });
-        }
+        // if ("geolocation" in navigator) {
+        //     navigator.geolocation.getCurrentPosition(function(position) {
+        //         setCoordinates({lat: position.coords.latitude, lng: position.coords.longitude});
+        //         setPersonalCoordinates({lat: position.coords.latitude, lng: position.coords.longitude});
+        //         setZoom(6);
+        //     });
+        // }
 
         maps.event.addListener(map, "rightclick", function(event: any) {
             const lat = event.latLng.lat();
@@ -124,26 +138,41 @@ const IndexPage: FunctionComponent = () => {
         });
 
         maps.event.addListener(map, 'dragStart', function (event:any) {
-            console.log('dragStart');
             clearTimeout(timeout);
         });
 
         maps.event.addListener(map, 'drag', function (event:any) {
-            console.log('dragStart');
             drag = true;
             clearTimeout(timeout);
         });
 
         maps.event.addListener(map, 'dragend', function (event:any) {
-            console.log('dragend');
             drag = false
         });
 
-        maps.event.addListener(map, 'zoom_changed', function (event:any) {
-            console.log('zoom_changed');
+        maps.event.addListener(map, 'zoom_changed', debounce(() => {
             clearTimeout(timeout);
-        });
+            const zoom = map.getZoom();
+            dispatch(setStoreZoom(zoom))
+        }, 250));
+
+        maps.event.addListener(map, 'bounds_changed', debounce(() => {
+            const center = map.getCenter();
+            const lat = center.lat();
+            const lng = center.lng();
+            dispatch(setStoreCoordinates({lat: lat, lng: lng}));
+        }, 250));
     };
+
+    useEffect(() => {
+       if(storeCoordinates) {
+           setCoordinates(storeCoordinates)
+       }
+       if(storeZoom){
+           setZoom(storeZoom)
+       }
+    });
+
 
     const createMapOptions = (maps: any) => {
         return {
@@ -170,7 +199,6 @@ const IndexPage: FunctionComponent = () => {
                 yesIWantToUseGoogleMapApiInternals
                 onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
                 options={createMapOptions}
-
             >
                 {locationPins}
                 {selectedLocation &&

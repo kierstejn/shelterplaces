@@ -1,5 +1,6 @@
 import db from '../data/db';
 import LocationCreate from "../models/location/LocationCreate";
+import LocationRead from "../models/location/LocationRead";
 
 export const createLocation = (location: LocationCreate): Promise<string> => {
     return db('location')
@@ -14,3 +15,6 @@ export const createLocation = (location: LocationCreate): Promise<string> => {
         })
 };
 
+export const getAllLocations = (): Promise<LocationRead[]> => {
+    return db().select('id', 'lng', 'lat').table('location')
+};

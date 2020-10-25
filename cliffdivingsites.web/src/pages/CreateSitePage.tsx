@@ -82,13 +82,13 @@ const CreateSitePage = () => {
         const token = await getAccessTokenSilently();
         const data: LocationCreate = {
             lat: geoLocation.lat,
-            lng: geoLocation.lat,
+            lng: geoLocation.lng,
             displayName: geoLocation.address?.display_name,
             title: formData.title,
             description: formData.description
         };
         try {
-            const response = await axios.post('/sites', data, {
+            const response = await axios.post('/location', data, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             dispatch(showSnackBar({message: 'Site was successfully created!', messageType: MessageTypes.Success}));

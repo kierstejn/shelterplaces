@@ -1,6 +1,8 @@
 import express from 'express';
-import {createLocation} from "./services/LocationService";
-import {validateLocationCreateModel} from "./middleware/validation/LocationCreateValidation";
+import {createLocation, getAllLocations} from "./services/LocationService";
+import { validateLocationCreateModel } from "./middleware/validation/LocationCreateValidation";
+import LocationRead from './models/location/LocationRead'
+
 let bodyParser = require('body-parser');
 let cors = require('cors');
 const jwt = require('express-jwt');
@@ -23,18 +25,20 @@ var jwtCheck = jwt({
     algorithms: ['RS256']
 });
 
-server.use(jwtCheck);
-
-
-server.get('/', (req, res) => {
-    res.send("hello")
-});
-
-server.post('/sites', validateLocationCreateModel, async (req, res) => {
+server.post('/location', validateLocationCreateModel, jwtCheck, async (req, res) => {
     try {
         console.log(req.body)
         const response: string = await createLocation(req.body);
         res.send(response[0])
+    } catch (e) {
+        res.send(e)
+    }
+});
+
+server.get('/location', async (req, res) => {
+    try {
+        const response: LocationRead[] = await getAllLocations();
+        res.send(response)
     } catch (e) {
         res.send(e)
     }

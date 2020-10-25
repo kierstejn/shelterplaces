@@ -14,13 +14,17 @@ import Pin from '../components/map/Pin'
 import LocationCard from "../components/map/LocationCard";
 import MapMenu from "../components/map/MapMenu";
 
-//Reduxç
+//Redux
 import { setCoordinates as setStoreCoordinates, setZoom as setStoreZoom } from '../store/map/actions'
+import { showSnackBar } from '../store/snackBar/actions'
 import { ApplicationState } from '../store';
 
 
 import config from "../config";
 import PersonPin from "../components/map/PersonPin";
+import axios from "../axios";
+import { MessageTypes } from "../models/snackBar/snackBar";
+import { useHistory, useLocation} from "react-router-dom";
 
 
 interface RightClickProps {
@@ -34,8 +38,10 @@ interface CoordinatesProps {
 
 const IndexPage: FunctionComponent = () => {
 
-    const { isAuthenticated } = useAuth0();
+    const { isAuthenticated, getAccessTokenSilently } = useAuth0();
     const dispatch = useDispatch();
+    const history = useHistory();
+    const location = useLocation();
 
     const storeCoordinates = useSelector((state: ApplicationState) => state.map.coordinates);
     const storeZoom = useSelector((state: ApplicationState) => state.map.zoom);
@@ -47,6 +53,7 @@ const IndexPage: FunctionComponent = () => {
     const [longHold, setLongHold] = useState(false);
     const [zoom, setZoom] = useState(2);
 
+    const [locationData, setLocationData] = useState<LocationRead[]>([]);
 
     const handleLocationSelect = (key: string, location: any) => {
         if(rightClick && !longHold){
@@ -66,20 +73,7 @@ const IndexPage: FunctionComponent = () => {
         }
     };
 
-    const data: LocationRead[] = [
-        {
-            id: "1",
-            lat: 55.676098,
-            lng: 12.568337
-        },
-        {
-            id: "2",
-            lat: 58.676098,
-            lng: 13.568337
-        }
-    ];
-
-    const locationPins = data.map((location, index) => {
+    const locationPins = locationData.map((location, index) => {
         if (location.lat === null || location.lng === null) {
             return null
         } else {
@@ -95,12 +89,8 @@ const IndexPage: FunctionComponent = () => {
 
 
     const handleApiLoaded = (map: any, maps: any) => {
-
-        let mousedUp: boolean;
-        let longHold: boolean;
         let drag: boolean;
         let timeout: any;
-
         // if ("geolocation" in navigator) {
         //     navigator.geolocation.getCurrentPosition(function(position) {
         //         setCoordinates({lat: position.coords.latitude, lng: position.coords.longitude});
@@ -181,6 +171,19 @@ const IndexPage: FunctionComponent = () => {
             scrollwheel: true,
         }
     };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get('/location');
+                setLocationData(response.data);
+                console.log(response.data);
+            } catch (e) {
+                dispatch(showSnackBar({message: 'Error occurred!', messageType: MessageTypes.Error}));
+            }
+        };
+        fetchData()
+    }, [location.pathname]);
 
     return (
         <div style={{display: 'flex', flexDirection: 'column', flexGrow: 1}} >

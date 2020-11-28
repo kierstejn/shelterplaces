@@ -7,6 +7,7 @@ import { useLocation, useHistory } from 'react-router-dom';
 import { GeocodedAddress } from "../models/geocoding/GeocodedAddress";
 import { useForm } from "react-hook-form";
 import { GeocodedLocationResult } from "../models/geocoding/GeocodedLocationResult";
+import { debounce } from 'lodash'
 
 import axios from "../axios";
 import LocationCreate from "../models/location/LocationCreate";
@@ -15,8 +16,6 @@ import LocationCreate from "../models/location/LocationCreate";
 import {useDispatch} from "react-redux";
 import {showSnackBar, SnackBarActionTypes} from '../store/snackBar/actions';
 import { MessageTypes } from '../models/snackBar/snackBar';
-
-
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -50,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
 type FormData = {
     title: string;
     description: string;
+    geoLocation: string;
 };
 
 const CreateSitePage = () => {
@@ -58,21 +58,13 @@ const CreateSitePage = () => {
     const { user, getAccessTokenSilently } = useAuth0();
     const location = useLocation();
     const history = useHistory();
-    const { register, errors, handleSubmit } = useForm<FormData>();
+    const { register, errors, handleSubmit, setValue, trigger, getValues } = useForm<FormData>();
     const [geoLocation, setGeoLocation] = useState<GeocodedLocationResult | null>(null);
     const dispatch = useDispatch();
 
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [submitError, setSubmitError] = useState<string>('');
 
-    useEffect(() => {
-        const state = location.state;
-        if(!state){
-            history.push('/')
-        }
-        // @ts-ignore
-        setGeoLocation(state)
-    }, [location]);
 
     const onSubmit = async (formData: FormData) => {
         if(!geoLocation){
@@ -99,6 +91,11 @@ const CreateSitePage = () => {
         } finally {
             setIsSubmitting(false)
         }
+    };
+
+    const handleLocationChange = () => {
+        const value = getValues('geoLocation');
+        console.log(value)
     };
 
     return (
@@ -142,6 +139,19 @@ const CreateSitePage = () => {
                                 variant="outlined"
                                 className={classes.inputField}
                             />
+                            <TextField
+                                required
+                                select
+                                id="geoLocation"
+                                label="Location"
+                                name={'geoLocation'}
+                                inputRef={register}
+                                variant="outlined"
+                                className={classes.inputField}
+                                onChange={debounce(handleLocationChange, 400)}
+                            >
+
+                            </TextField>
                             <Button
                                 type={'submit'}
                                 color={'secondary'}

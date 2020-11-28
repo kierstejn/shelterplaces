@@ -7,7 +7,7 @@ import {Route, BrowserRouter as Router, useHistory} from "react-router-dom";
 import { Auth0Provider, withAuthenticationRequired } from "@auth0/auth0-react";
 
 //Pages
-import IndexPage from "./pages/IndexPage";
+import MapPage from "./pages/MapPage";
 import ProfilePage from "./pages/ProfilePage";
 import CreateSitePage from "./pages/CreateSitePage";
 
@@ -50,9 +50,9 @@ function App() {
                 audience={'http://cliffdivingsites/api'}
             >
                 <Layout>
-                    <Route path='/' exact={true} component={IndexPage}/>
+                    <Route path='/' exact={true} component={MapPage}/>
                     <ProtectedRoute path={'/profile'} component={ProfilePage} />
-                    <ProtectedRoute path={'/sites/create'} component={CreateSitePage} />
+                    <ProtectedRoute path={'/sites/add'} component={CreateSitePage} />
                 </Layout>
             </Auth0Provider>
         );

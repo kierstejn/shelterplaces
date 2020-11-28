@@ -7,7 +7,7 @@ import { debounce } from 'lodash'
 
 
 //Models
-import {LocationRead} from "../models/location/LocationRead";
+import LocationRead from "../models/location/LocationRead";
 
 //Components
 import Pin from '../components/map/Pin'

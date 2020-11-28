@@ -3,7 +3,7 @@ import {ChildComponentProps} from "google-map-react";
 import PoolIcon from '@material-ui/icons/Pool';
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import ts from "typescript/lib/tsserverlibrary";
-import {LocationRead} from "../../models/location/LocationRead";
+import LocationRead from "../../models/location/LocationRead";
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 
@@ -17,8 +17,6 @@ const useStyles = makeStyles((theme: Theme) =>
         }
     }),
 );
-
-
 
 interface Props {
    location: LocationRead

@@ -39,9 +39,8 @@ const useStyles = makeStyles((theme: Theme) =>
         accountCircle: {
             color: 'white'
         },
-        authButton: {
+        button: {
             color: 'white',
-
         },
         circularProgress: {
             color: 'white'
@@ -71,6 +70,10 @@ const Header: FunctionComponent = () => {
         }
     };
 
+    const handleAddNewSite = () => {
+        history.push('/sites/add')
+    };
+
     return (
         <div className={classes.root}>
             <AppBar position="static" className={classes.appBar}>
@@ -79,29 +82,35 @@ const Header: FunctionComponent = () => {
                         CliffDivingSites
                     </Link>
                     <div>
+                        {isAuthenticated &&
+                        <Button
+                            onClick={handleAddNewSite}
+                            className={classes.button}
+                            disabled={isLoading}
+                        >
+                            {'ADD NEW SITE'}
+                        </Button>
+                        }
                         <Button
                             onClick={handleAuth}
-                            className={classes.authButton}
+                            className={classes.button}
                             disabled={isLoading}
                         >
                             {isLoading && <CircularProgress size={20} className={classes.circularProgress}/>}
                             {!isLoading && isAuthenticated && 'LOGOUT'}
                             {!isLoading && !isAuthenticated && 'LOGIN/REGISTER'}
                         </Button>
-
                         {isAuthenticated &&
-                            <Fragment>
-                                <IconButton
-                                    aria-label="account of current user"
-                                    aria-controls="menu-appbar"
-                                    aria-haspopup="true"
-                                    onClick={handleProfileClicked}
-                                    color="inherit"
-                                    className={classes.accountCircle}
-                                >
-                                    <AccountCircle />
-                                </IconButton>
-                            </Fragment>
+                            <IconButton
+                                aria-label="account of current user"
+                                aria-controls="menu-appbar"
+                                aria-haspopup="true"
+                                onClick={handleProfileClicked}
+                                color="inherit"
+                                className={classes.accountCircle}
+                            >
+                                <AccountCircle />
+                            </IconButton>
                         }
                     </div>
                 </Toolbar>

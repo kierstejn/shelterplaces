@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createLocation = void 0;
+exports.getLocation = exports.getAllLocations = exports.createLocation = void 0;
 const db_1 = __importDefault(require("../data/db"));
 exports.createLocation = (location) => {
     return db_1.default('location')
@@ -16,5 +16,15 @@ exports.createLocation = (location) => {
         title: location.title,
         description: location.description
     });
+};
+exports.getAllLocations = () => {
+    return db_1.default('location').select('id', 'lng', 'lat');
+};
+exports.getLocation = (id) => {
+    return db_1.default()
+        .select('user_id as userId', 'lat', 'lng', 'display_name as displayName', 'title', 'description')
+        .where('id', id)
+        .table('location')
+        .first();
 };
 //# sourceMappingURL=LocationService.js.map

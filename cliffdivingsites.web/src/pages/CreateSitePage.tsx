@@ -160,7 +160,7 @@ const CreateSitePage = () => {
                                 className={classes.submitButton}
                                 disabled={isSubmitting}
                             >
-                                {!isSubmitting ? 'Create' : <CircularProgress size={20} className={classes.circularProgress}/>}
+                                {!isSubmitting ? 'Created' : <CircularProgress size={20} className={classes.circularProgress}/>}
                             </Button>
                         </form>
                     </Paper>

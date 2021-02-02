@@ -12,7 +12,7 @@ const routes = require('express').Router();
 
 routes.post('/', validateLocationCreateModel, jwtCheck, async (req: Request, res: Response) => {
     try {
-        console.log(req.body)
+        console.log(req.body);
         const response: string = await createLocation(req.body);
         res.send(response[0])
     } catch (e) {

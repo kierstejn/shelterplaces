@@ -11,7 +11,6 @@ import LocationRead from "../models/location/LocationRead";
 import LocationDetail from "../models/location/LocationDetail";
 
 //Redux
-import { setCoordinates as setStoreCoordinates, setZoom as setStoreZoom } from '../store/map/actions'
 import { showSnackBar } from '../store/snackBar/actions'
 import { ApplicationState } from '../store';
 
@@ -35,7 +34,6 @@ const IndexPage: FunctionComponent = () => {
             try {
                 const response = await axios.get('/location');
                 setLocationData(response.data);
-                console.log(response.data);
             } catch (e) {
                 dispatch(showSnackBar({message: 'Error occurred!', messageType: MessageTypes.Error}));
             }

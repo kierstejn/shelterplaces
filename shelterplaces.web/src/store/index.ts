@@ -7,14 +7,11 @@ import { History } from 'history'
 import authenticationSaga from "./auth/sagas";
 import { connectRouter } from "connected-react-router";
 import { snackBarReducer, SnackBarState } from "./snackBar/reducer";
-import { MapState, mapReducer } from "./map/reducer";
-
 
 
 export interface ApplicationState {
     authentication: AuthenticationState
     snackBar: SnackBarState
-    map: MapState
 }
 
 export const createRootReducer = (history: History) =>
@@ -22,12 +19,10 @@ export const createRootReducer = (history: History) =>
         authentication: authenticationReducer,
         router: connectRouter(history),
         snackBar: snackBarReducer,
-        map: mapReducer
 });
 
 export function* rootSaga() {
     yield all([
         fork(authenticationSaga),
-
     ])
 }

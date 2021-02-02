@@ -8,6 +8,7 @@ import { GeocodedAddress } from "../models/geocoding/GeocodedAddress";
 import { useForm } from "react-hook-form";
 import { GeocodedLocationResult } from "../models/geocoding/GeocodedLocationResult";
 import { debounce } from 'lodash'
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
 import axios from "../axios";
 import LocationCreate from "../models/location/LocationCreate";
@@ -16,6 +17,7 @@ import LocationCreate from "../models/location/LocationCreate";
 import {useDispatch} from "react-redux";
 import {showSnackBar, SnackBarActionTypes} from '../store/snackBar/actions';
 import { MessageTypes } from '../models/snackBar/snackBar';
+import {getLocationOptionList} from "../api/geocoding/locationApi";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -59,12 +61,14 @@ const CreateSitePage = () => {
     const location = useLocation();
     const history = useHistory();
     const { register, errors, handleSubmit, setValue, trigger, getValues } = useForm<FormData>();
-    const [geoLocation, setGeoLocation] = useState<GeocodedLocationResult | null>(null);
     const dispatch = useDispatch();
 
-    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-    const [submitError, setSubmitError] = useState<string>('');
+    //Location information
+    const [geoLocation, setGeoLocation] = useState<GeocodedLocationResult | null>(null);
+    //const [geoLocationOptions, setGeoLocationOptions] = useState(initState);
 
+    //Form information
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
     const onSubmit = async (formData: FormData) => {
         if(!geoLocation){
@@ -87,16 +91,18 @@ const CreateSitePage = () => {
             history.push('/');
         } catch (e) {
             dispatch(showSnackBar({message: 'Error occurred!', messageType: MessageTypes.Error}));
-            setSubmitError(e);
         } finally {
             setIsSubmitting(false)
         }
     };
 
-    const handleLocationChange = () => {
-        const value = getValues('geoLocation');
-        console.log(value)
-    };
+    useEffect(() => {
+        const data = getLocationOptionList("hej");
+        console.log(data)
+    }, []);
+
+    
+    
 
     return (
         <Fragment>
@@ -107,16 +113,16 @@ const CreateSitePage = () => {
                         <Typography component="h2" variant="h6" color="primary" gutterBottom>
                             Create new site
                         </Typography>
-                        {geoLocation && geoLocation.address &&
-                            <Typography variant="body2" component="p" gutterBottom>
-                                {geoLocation.address.display_name}
-                            </Typography>
-                        }
-                        {geoLocation && !geoLocation.address &&
-                            <Typography variant="body2" component="p">
-                                {`Latitude: ${geoLocation.lat} - Longtitude: ${geoLocation.lng}`}
-                            </Typography>
-                        }
+                        {/*{geoLocation && geoLocation.address &&*/}
+                        {/*    <Typography variant="body2" component="p" gutterBottom>*/}
+                        {/*        {geoLocation.address.display_name}*/}
+                        {/*    </Typography>*/}
+                        {/*}*/}
+                        {/*{geoLocation && !geoLocation.address &&*/}
+                        {/*    <Typography variant="body2" component="p">*/}
+                        {/*        {`Latitude: ${geoLocation.lat} - Longtitude: ${geoLocation.lng}`}*/}
+                        {/*    </Typography>*/}
+                        {/*}*/}
                         <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
                             <TextField
                                 required
@@ -139,19 +145,23 @@ const CreateSitePage = () => {
                                 variant="outlined"
                                 className={classes.inputField}
                             />
-                            <TextField
-                                required
-                                select
-                                id="geoLocation"
-                                label="Location"
-                                name={'geoLocation'}
-                                inputRef={register}
-                                variant="outlined"
-                                className={classes.inputField}
-                                onChange={debounce(handleLocationChange, 400)}
-                            >
-
-                            </TextField>
+                            <Autocomplete
+                                id="combo-box-demo"
+                                options={[
+                                    {
+                                        title: "hej"
+                                    },
+                                    {
+                                        title: "2"
+                                    },
+                                    {
+                                        title: "3"
+                                    }
+                                ]}
+                                getOptionLabel={(option) => option.title}
+                                style={{ width: 300 }}
+                                renderInput={(params) => <TextField {...params} label="Combo box" variant="outlined" />}
+                            />
                             <Button
                                 type={'submit'}
                                 color={'secondary'}
